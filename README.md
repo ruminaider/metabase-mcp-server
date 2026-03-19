@@ -69,6 +69,7 @@ The server supports three authentication methods, tried in priority order:
 | `METABASE_USER_EMAIL` | * | Email for email/password authentication |
 | `METABASE_PASSWORD` | * | Password (required when `METABASE_USER_EMAIL` is set) |
 | `METABASE_READ_ONLY` | No | Set to `true` to block all write operations (default: `false`) |
+| `METABASE_CACHE_TTL_MS` | No | Cache TTL in milliseconds for schema data (default: `600000` / 10 minutes) |
 
 \* At least one authentication method is required.
 
@@ -78,6 +79,40 @@ Set `METABASE_READ_ONLY=true` to block all write operations. The server will rej
 
 Write-protected tools include: `create_card`, `update_card`, `archive_card`, `copy_card`, `create_dashboard`, `update_dashboard`, `archive_dashboard`, `copy_dashboard`, `update_dashboard_cards`, `create_collection`, `update_collection`, `update_field`, `revert_revision`, `toggle_bookmark`, and `invalidate_cache`.
 
+## Performance
+
+### Response Optimization
+
+All responses are automatically optimized to reduce token usage:
+
+- **List responses** strip query definitions, visualization settings, creator details, and other metadata -- returning only identifiers and essential fields.
+- **Detail responses** strip `result_metadata` (column fingerprints), embedding params, permission booleans, and other bloat while keeping functional fields like queries and parameters.
+- **Query results** are flattened from Metabase's `{rows: [[v1,v2]], cols: [{name:"a"}]}` format into `[{"a": v1, "b": v2}]` -- eliminating column metadata overhead.
+- **All responses** use compact JSON (no whitespace).
+
+### Caching
+
+Schema exploration data is cached in-memory with a configurable TTL (default: 10 minutes):
+
+- Databases, database metadata, schemas, and schema tables
+- Tables, table metadata, foreign keys, fields, and field values
+- Collection tree
+
+Cards, dashboards, search results, and query results are NOT cached -- these change frequently and staleness causes bugs.
+
+Cache entries expire automatically. Write operations (`update_field`) invalidate relevant cache entries immediately. Configure TTL with `METABASE_CACHE_TTL_MS`.
+
+### Batch Retrieval
+
+`get_card`, `get_dashboard`, and `get_table` accept either a single ID or an array of IDs:
+
+```json
+{ "id": 42 }
+{ "id": [42, 43, 44] }
+```
+
+When multiple IDs are passed, requests are executed concurrently (max 5 at a time) with individual error handling -- one failed ID won't abort the batch.
+
 ## Tools
 
 ### Cards (Saved Questions) -- 10 tools
@@ -85,7 +120,7 @@ Write-protected tools include: `create_card`, `update_card`, `archive_card`, `co
 | Tool | Description |
 |------|-------------|
 | `list_cards` | List saved questions/cards, with optional category filter |
-| `get_card` | Get a card by ID, including query definition and visualization settings |
+| `get_card` | Get a card by ID or batch-fetch multiple cards by ID array |
 | `create_card` | Create a new saved question/card |
 | `update_card` | Update a card's name, description, query, display, or collection |
 | `copy_card` | Duplicate a saved question/card |
@@ -100,7 +135,7 @@ Write-protected tools include: `create_card`, `update_card`, `archive_card`, `co
 | Tool | Description |
 |------|-------------|
 | `list_dashboards` | List all dashboards, with optional category filter |
-| `get_dashboard` | Get a dashboard by ID, including cards, parameters, and layout |
+| `get_dashboard` | Get a dashboard by ID or batch-fetch multiple dashboards by ID array |
 | `create_dashboard` | Create a new dashboard |
 | `update_dashboard` | Update a dashboard's name, description, parameters, or collection |
 | `copy_dashboard` | Duplicate a dashboard, optionally to a different collection |
@@ -123,7 +158,7 @@ Write-protected tools include: `create_card`, `update_card`, `archive_card`, `co
 | Tool | Description |
 |------|-------------|
 | `list_tables` | List all tables across all databases |
-| `get_table` | Get details for a specific table |
+| `get_table` | Get a table by ID or batch-fetch multiple tables by ID array |
 | `get_table_metadata` | Get full metadata including fields, foreign keys, and field values |
 | `get_table_fks` | Get all foreign key relationships for a table |
 | `get_field` | Get details for a specific field |
@@ -207,10 +242,13 @@ src/
     search-tools.ts          # Search/activity tool definitions
     table-tools.ts           # Table/field tool definitions
   utils/
-    errors.ts                # Custom error types (ReadOnlyError, etc.)
-    logger.ts                # Structured logging
+    batch.ts                 # Concurrent batch processing with configurable concurrency
+    cache.ts                 # In-memory TTL cache for schema exploration data
+    errors.ts                # Custom error types (AuthenticationError, NotFoundError, etc.)
+    logger.ts                # Structured stderr logging (safe for stdio MCP transport)
     read-only-guard.ts       # Write-operation guard for read-only mode
-    retry.ts                 # Retry logic for transient failures
+    response.ts              # Response optimization (field stripping, query flattening, compact JSON)
+    retry.ts                 # Exponential backoff retry for transient failures
 ```
 
 ### Adding a New Tool
