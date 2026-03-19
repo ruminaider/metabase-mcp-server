@@ -1,0 +1,8 @@
+node_modules
+dist
+.git
+*.md
+*.test.ts
+biome.json
+tsconfig.json
+.env
