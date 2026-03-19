@@ -24,9 +24,15 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 	server.tool(
 		"get_dashboard",
 		"Get a dashboard by ID, including all its cards, parameters, and layout.",
-		{ id: z.number().describe("Dashboard ID") },
+		{
+			id: z.union([z.number(), z.array(z.number())]).describe("Dashboard ID or array of Dashboard IDs for batch retrieval"),
+		},
 		async ({ id }) => {
 			try {
+				if (Array.isArray(id)) {
+					const results = await service.getDashboards(id);
+					return { content: [{ type: "text", text: optimizeDetail(results) }] };
+				}
 				const result = await service.getDashboard(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {

@@ -27,9 +27,15 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 	server.tool(
 		"get_card",
 		"Get a saved question/card by ID, including its query definition and visualization settings.",
-		{ id: z.number().describe("Card ID") },
+		{
+			id: z.union([z.number(), z.array(z.number())]).describe("Card ID or array of Card IDs for batch retrieval"),
+		},
 		async ({ id }) => {
 			try {
+				if (Array.isArray(id)) {
+					const results = await service.getCards(id);
+					return { content: [{ type: "text", text: optimizeDetail(results) }] };
+				}
 				const result = await service.getCard(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
