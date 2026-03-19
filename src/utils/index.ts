@@ -9,3 +9,6 @@ export {
 	ReadOnlyError,
 } from "./errors.js";
 export { initReadOnlyGuard, assertWriteEnabled } from "./read-only-guard.js";
+export { optimizeDetail, optimizeList, optimizeQueryResult, formatResponse } from "./response.js";
+export { batchProcess } from "./batch.js";
+export { Cache } from "./cache.js";

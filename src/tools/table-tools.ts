@@ -23,9 +23,15 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 	server.tool(
 		"get_table",
 		"Get details for a specific table by ID.",
-		{ id: z.number().describe("Table ID") },
+		{
+			id: z.union([z.number(), z.array(z.number())]).describe("Table ID or array of Table IDs for batch retrieval"),
+		},
 		async ({ id }) => {
 			try {
+				if (Array.isArray(id)) {
+					const results = await service.getTables(id);
+					return { content: [{ type: "text", text: JSON.stringify(results, null, 2) }] };
+				}
 				const result = await service.getTable(id);
 				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
 			} catch (error) {

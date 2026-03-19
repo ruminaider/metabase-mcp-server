@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { DashboardService } from "../services/dashboard-service.js";
 import type { MetabaseClient } from "../services/metabase-client.js";
+import { optimizeList, optimizeDetail } from "../utils/response.js";
 
 export function registerDashboardTools(server: McpServer, client: MetabaseClient): number {
 	const service = new DashboardService(client);
@@ -13,7 +14,7 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 		async ({ f }) => {
 			try {
 				const result = await service.listDashboards(f);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -27,7 +28,7 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 		async ({ id }) => {
 			try {
 				const result = await service.getDashboard(id);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -46,7 +47,7 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 		async (params) => {
 			try {
 				const result = await service.createDashboard(params);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -66,7 +67,7 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 		async ({ id, ...updates }) => {
 			try {
 				const result = await service.updateDashboard(id, updates);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -85,7 +86,7 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 		async ({ id, ...options }) => {
 			try {
 				const result = await service.copyDashboard(id, options);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -102,7 +103,7 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 		async ({ id, cards }) => {
 			try {
 				const result = await service.updateDashboardCards(id, cards);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -116,7 +117,7 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 		async ({ id }) => {
 			try {
 				const result = await service.archiveDashboard(id);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -130,7 +131,7 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 		async ({ id }) => {
 			try {
 				const result = await service.getDashboardMetadata(id);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}

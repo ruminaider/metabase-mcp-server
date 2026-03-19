@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { QueryService } from "../services/query-service.js";
 import type { MetabaseClient } from "../services/metabase-client.js";
+import { optimizeQueryResult, formatResponse } from "../utils/response.js";
 
 export function registerQueryTools(server: McpServer, client: MetabaseClient): number {
 	const service = new QueryService(client);
@@ -20,7 +21,7 @@ export function registerQueryTools(server: McpServer, client: MetabaseClient): n
 		async ({ database_id, query, template_tags }) => {
 			try {
 				const result = await service.executeQuery(database_id, query, template_tags);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeQueryResult(result) }] };
 			} catch (error) {
 				return {
 					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
@@ -41,7 +42,7 @@ export function registerQueryTools(server: McpServer, client: MetabaseClient): n
 		async ({ database_id, query, format }) => {
 			try {
 				const result = await service.exportQueryResults(database_id, query, format);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: formatResponse(result) }] };
 			} catch (error) {
 				return {
 					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
@@ -66,7 +67,7 @@ export function registerQueryTools(server: McpServer, client: MetabaseClient): n
 		async ({ dataset_query }) => {
 			try {
 				const result = await service.convertToNativeSql(dataset_query);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: formatResponse(result) }] };
 			} catch (error) {
 				return {
 					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],

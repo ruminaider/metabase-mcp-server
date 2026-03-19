@@ -53,4 +53,10 @@ export class DashboardService {
 	async getDashboardMetadata(id: number): Promise<unknown> {
 		return this.client.get(`/api/dashboard/${id}/query_metadata`);
 	}
+
+	async getDashboards(ids: number[]): Promise<unknown[]> {
+		const { batchProcess } = await import("../utils/batch.js");
+		const results = await batchProcess(ids, (id) => this.getDashboard(id));
+		return results;
+	}
 }

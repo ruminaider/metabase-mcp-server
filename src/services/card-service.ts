@@ -70,4 +70,10 @@ export class CardService {
 		assertWriteEnabled();
 		return this.client.put(`/api/card/${id}`, { archived: true });
 	}
+
+	async getCards(ids: number[]): Promise<unknown[]> {
+		const { batchProcess } = await import("../utils/batch.js");
+		const results = await batchProcess(ids, (id) => this.getCard(id));
+		return results;
+	}
 }

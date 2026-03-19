@@ -1,5 +1,8 @@
 import type { MetabaseClient } from "./metabase-client.js";
 import { assertWriteEnabled } from "../utils/read-only-guard.js";
+import { Cache } from "../utils/cache.js";
+
+const collectionTreeCache = new Cache<unknown>("collection-tree");
 
 export class CollectionService {
 	constructor(private client: MetabaseClient) {}
@@ -30,7 +33,11 @@ export class CollectionService {
 	}
 
 	async getCollectionTree(): Promise<unknown> {
-		return this.client.get("/api/collection/tree");
+		const cached = collectionTreeCache.get("tree");
+		if (cached) return cached;
+		const result = await this.client.get("/api/collection/tree");
+		collectionTreeCache.set("tree", result);
+		return result;
 	}
 
 	async createCollection(params: {
@@ -40,7 +47,9 @@ export class CollectionService {
 		color?: string;
 	}): Promise<unknown> {
 		assertWriteEnabled();
-		return this.client.post("/api/collection", params);
+		const result = await this.client.post("/api/collection", params);
+		collectionTreeCache.invalidate();
+		return result;
 	}
 
 	async updateCollection(
@@ -48,6 +57,8 @@ export class CollectionService {
 		updates: Record<string, unknown>,
 	): Promise<unknown> {
 		assertWriteEnabled();
-		return this.client.put(`/api/collection/${id}`, updates);
+		const result = await this.client.put(`/api/collection/${id}`, updates);
+		collectionTreeCache.invalidate();
+		return result;
 	}
 }
