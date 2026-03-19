@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { CollectionService } from "../services/collection-service.js";
 import type { MetabaseClient } from "../services/metabase-client.js";
+import { optimizeList, optimizeDetail } from "../utils/response.js";
 
 export function registerCollectionTools(server: McpServer, client: MetabaseClient): number {
 	const service = new CollectionService(client);
@@ -13,7 +14,7 @@ export function registerCollectionTools(server: McpServer, client: MetabaseClien
 		async ({ archived }) => {
 			try {
 				const result = await service.listCollections(archived);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -27,7 +28,7 @@ export function registerCollectionTools(server: McpServer, client: MetabaseClien
 		async ({ id }) => {
 			try {
 				const result = await service.getCollection(id);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -46,7 +47,7 @@ export function registerCollectionTools(server: McpServer, client: MetabaseClien
 		async ({ id, models, limit, offset }) => {
 			try {
 				const result = await service.getCollectionItems(id, { models, limit, offset });
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -60,7 +61,7 @@ export function registerCollectionTools(server: McpServer, client: MetabaseClien
 		async () => {
 			try {
 				const result = await service.getCollectionTree();
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -79,7 +80,7 @@ export function registerCollectionTools(server: McpServer, client: MetabaseClien
 		async (params) => {
 			try {
 				const result = await service.createCollection(params);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -100,7 +101,7 @@ export function registerCollectionTools(server: McpServer, client: MetabaseClien
 		async ({ id, ...updates }) => {
 			try {
 				const result = await service.updateCollection(id, updates);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}

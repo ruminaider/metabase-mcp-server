@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { DatabaseService } from "../services/database-service.js";
 import type { MetabaseClient } from "../services/metabase-client.js";
+import { optimizeList, optimizeDetail } from "../utils/response.js";
 
 export function registerDatabaseTools(server: McpServer, client: MetabaseClient): number {
 	const service = new DatabaseService(client);
@@ -15,7 +16,7 @@ export function registerDatabaseTools(server: McpServer, client: MetabaseClient)
 		async ({ include_cards }) => {
 			try {
 				const result = await service.listDatabases(include_cards);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -29,7 +30,7 @@ export function registerDatabaseTools(server: McpServer, client: MetabaseClient)
 		async ({ id }) => {
 			try {
 				const result = await service.getDatabase(id);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -43,7 +44,7 @@ export function registerDatabaseTools(server: McpServer, client: MetabaseClient)
 		async ({ id }) => {
 			try {
 				const result = await service.getDatabaseMetadata(id);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -57,7 +58,7 @@ export function registerDatabaseTools(server: McpServer, client: MetabaseClient)
 		async ({ id }) => {
 			try {
 				const result = await service.listDatabaseSchemas(id);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -74,7 +75,7 @@ export function registerDatabaseTools(server: McpServer, client: MetabaseClient)
 		async ({ database_id, schema }) => {
 			try {
 				const result = await service.listSchemaTables(database_id, schema);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}

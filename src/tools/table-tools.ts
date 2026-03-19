@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { TableService } from "../services/table-service.js";
 import type { MetabaseClient } from "../services/metabase-client.js";
+import { optimizeList, optimizeDetail } from "../utils/response.js";
 
 export function registerTableTools(server: McpServer, client: MetabaseClient): number {
 	const service = new TableService(client);
@@ -13,7 +14,7 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 		async () => {
 			try {
 				const result = await service.listTables();
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -30,10 +31,10 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 			try {
 				if (Array.isArray(id)) {
 					const results = await service.getTables(id);
-					return { content: [{ type: "text", text: JSON.stringify(results, null, 2) }] };
+					return { content: [{ type: "text", text: optimizeDetail(results) }] };
 				}
 				const result = await service.getTable(id);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -50,7 +51,7 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 		async ({ id, include_sensitive_fields }) => {
 			try {
 				const result = await service.getTableMetadata(id, include_sensitive_fields);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -64,7 +65,7 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 		async ({ id }) => {
 			try {
 				const result = await service.getTableFks(id);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -78,7 +79,7 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 		async ({ id }) => {
 			try {
 				const result = await service.getField(id);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -92,7 +93,7 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 		async ({ id }) => {
 			try {
 				const result = await service.getFieldValues(id);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -113,7 +114,7 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 		async ({ id, ...updates }) => {
 			try {
 				const result = await service.updateField(id, updates);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}

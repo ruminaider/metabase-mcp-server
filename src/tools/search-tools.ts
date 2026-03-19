@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SearchService } from "../services/search-service.js";
 import type { MetabaseClient } from "../services/metabase-client.js";
+import { optimizeList, formatResponse } from "../utils/response.js";
 
 export function registerSearchTools(server: McpServer, client: MetabaseClient): number {
 	const service = new SearchService(client);
@@ -19,7 +20,7 @@ export function registerSearchTools(server: McpServer, client: MetabaseClient): 
 		async (params) => {
 			try {
 				const result = await service.search(params);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -33,7 +34,7 @@ export function registerSearchTools(server: McpServer, client: MetabaseClient): 
 		async () => {
 			try {
 				const result = await service.getRecentViews();
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -47,7 +48,7 @@ export function registerSearchTools(server: McpServer, client: MetabaseClient): 
 		async () => {
 			try {
 				const result = await service.getCurrentUser();
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: formatResponse(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
@@ -64,7 +65,7 @@ export function registerSearchTools(server: McpServer, client: MetabaseClient): 
 		async (params) => {
 			try {
 				const result = await service.invalidateCache(params);
-				return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+				return { content: [{ type: "text", text: formatResponse(result) }] };
 			} catch (error) {
 				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
 			}
