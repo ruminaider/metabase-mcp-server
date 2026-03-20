@@ -1,8 +1,8 @@
-import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { z } from "zod";
 import { DashboardService } from "../services/dashboard-service.js";
 import type { MetabaseClient } from "../services/metabase-client.js";
-import { optimizeList, optimizeDetail } from "../utils/response.js";
+import { optimizeDetail, optimizeList } from "../utils/response.js";
 
 export function registerDashboardTools(server: McpServer, client: MetabaseClient): number {
 	const service = new DashboardService(client);
@@ -16,7 +16,10 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 				const result = await service.listDashboards(f);
 				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -25,7 +28,9 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 		"get_dashboard",
 		"Get a dashboard by ID, including all its cards, parameters, and layout.",
 		{
-			id: z.union([z.number(), z.array(z.number())]).describe("Dashboard ID or array of Dashboard IDs for batch retrieval"),
+			id: z
+				.union([z.number(), z.array(z.number())])
+				.describe("Dashboard ID or array of Dashboard IDs for batch retrieval"),
 		},
 		async ({ id }) => {
 			try {
@@ -36,7 +41,10 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 				const result = await service.getDashboard(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -55,7 +63,10 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 				const result = await service.createDashboard(params);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -75,7 +86,10 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 				const result = await service.updateDashboard(id, updates);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -94,7 +108,10 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 				const result = await service.copyDashboard(id, options);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -104,14 +121,21 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 		"Set the full list of cards on a dashboard — add, remove, reposition, or resize cards in one call. Requires write access.",
 		{
 			id: z.number().describe("Dashboard ID"),
-			cards: z.array(z.record(z.unknown())).describe("Array of card objects with id, card_id, row, col, size_x, size_y, parameter_mappings, etc."),
+			cards: z
+				.array(z.record(z.unknown()))
+				.describe(
+					"Array of card objects with id, card_id, row, col, size_x, size_y, parameter_mappings, etc.",
+				),
 		},
 		async ({ id, cards }) => {
 			try {
 				const result = await service.updateDashboardCards(id, cards);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -125,7 +149,10 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 				const result = await service.archiveDashboard(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -139,7 +166,10 @@ export function registerDashboardTools(server: McpServer, client: MetabaseClient
 				const result = await service.getDashboardMetadata(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);

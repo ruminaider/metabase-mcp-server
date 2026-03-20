@@ -1,5 +1,5 @@
-import type { MetabaseClient } from "./metabase-client.js";
 import { assertWriteEnabled } from "../utils/read-only-guard.js";
+import type { MetabaseClient } from "./metabase-client.js";
 
 export class SearchService {
 	constructor(private client: MetabaseClient) {}

@@ -1,5 +1,5 @@
-import type { MetabaseClient } from "./metabase-client.js";
 import { assertWriteEnabled } from "../utils/read-only-guard.js";
+import type { MetabaseClient } from "./metabase-client.js";
 
 export class DashboardService {
 	constructor(private client: MetabaseClient) {}
@@ -37,10 +37,7 @@ export class DashboardService {
 		return this.client.post(`/api/dashboard/${id}/copy`, options ?? {});
 	}
 
-	async updateDashboardCards(
-		id: number,
-		cards: Record<string, unknown>[],
-	): Promise<unknown> {
+	async updateDashboardCards(id: number, cards: Record<string, unknown>[]): Promise<unknown> {
 		assertWriteEnabled();
 		return this.client.put(`/api/dashboard/${id}/cards`, { cards });
 	}

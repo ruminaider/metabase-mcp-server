@@ -1,8 +1,8 @@
-import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { QueryService } from "../services/query-service.js";
+import { z } from "zod";
 import type { MetabaseClient } from "../services/metabase-client.js";
-import { optimizeQueryResult, formatResponse } from "../utils/response.js";
+import { QueryService } from "../services/query-service.js";
+import { formatResponse, optimizeQueryResult } from "../utils/response.js";
 
 export function registerQueryTools(server: McpServer, client: MetabaseClient): number {
 	const service = new QueryService(client);

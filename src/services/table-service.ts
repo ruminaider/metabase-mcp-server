@@ -1,6 +1,6 @@
-import type { MetabaseClient } from "./metabase-client.js";
-import { assertWriteEnabled } from "../utils/read-only-guard.js";
 import { Cache } from "../utils/cache.js";
+import { assertWriteEnabled } from "../utils/read-only-guard.js";
+import type { MetabaseClient } from "./metabase-client.js";
 
 const tableListCache = new Cache<unknown>("table-list");
 const tableCache = new Cache<unknown>("table");

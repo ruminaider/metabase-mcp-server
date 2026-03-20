@@ -1,6 +1,6 @@
-import type { MetabaseClient } from "./metabase-client.js";
-import { assertWriteEnabled } from "../utils/read-only-guard.js";
 import { Cache } from "../utils/cache.js";
+import { assertWriteEnabled } from "../utils/read-only-guard.js";
+import type { MetabaseClient } from "./metabase-client.js";
 
 const collectionTreeCache = new Cache<unknown>("collection-tree");
 
@@ -24,11 +24,12 @@ export class CollectionService {
 		const params: Record<string, string> = {};
 		if (options?.models) {
 			for (const model of options.models) {
-				params[`models`] = model;
+				params.models = model;
 			}
 		}
 		if (options?.limit) params.limit = String(options.limit);
-		if (options?.offset !== undefined && options?.offset !== null) params.offset = String(options.offset);
+		if (options?.offset !== undefined && options?.offset !== null)
+			params.offset = String(options.offset);
 		return this.client.get(`/api/collection/${id}/items`, params);
 	}
 
@@ -52,10 +53,7 @@ export class CollectionService {
 		return result;
 	}
 
-	async updateCollection(
-		id: number,
-		updates: Record<string, unknown>,
-	): Promise<unknown> {
+	async updateCollection(id: number, updates: Record<string, unknown>): Promise<unknown> {
 		assertWriteEnabled();
 		const result = await this.client.put(`/api/collection/${id}`, updates);
 		collectionTreeCache.invalidate();

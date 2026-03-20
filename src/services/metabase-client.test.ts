@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Config } from "../config.js";
 import {
 	AuthenticationError,
@@ -115,9 +115,7 @@ describe("MetabaseClient", () => {
 		// First call: POST /api/session
 		expect(fetchMock.mock.calls[0][0]).toBe("https://metabase.test/api/session");
 		// Second call: GET /api/card with session header
-		expect(fetchMock.mock.calls[1][1].headers["X-Metabase-Session"]).toBe(
-			"session-from-login",
-		);
+		expect(fetchMock.mock.calls[1][1].headers["X-Metabase-Session"]).toBe("session-from-login");
 	});
 
 	it("appends query params to GET URL", async () => {

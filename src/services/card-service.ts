@@ -1,5 +1,5 @@
-import type { MetabaseClient } from "./metabase-client.js";
 import { assertWriteEnabled } from "../utils/read-only-guard.js";
+import type { MetabaseClient } from "./metabase-client.js";
 
 export class CardService {
 	constructor(private client: MetabaseClient) {}
@@ -51,10 +51,7 @@ export class CardService {
 		return this.client.post(`/api/card/${id}/query`, body);
 	}
 
-	async exportCardResults(
-		id: number,
-		format: "csv" | "json" | "xlsx",
-	): Promise<unknown> {
+	async exportCardResults(id: number, format: "csv" | "json" | "xlsx"): Promise<unknown> {
 		return this.client.post(`/api/card/${id}/query/${format}`);
 	}
 

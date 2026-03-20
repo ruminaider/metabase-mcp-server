@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { SearchService } from "./search-service.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { MetabaseClient } from "./metabase-client.js";
+import { SearchService } from "./search-service.js";
 
 vi.mock("../utils/read-only-guard.js", () => ({
 	assertWriteEnabled: vi.fn(),

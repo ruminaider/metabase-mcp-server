@@ -1,5 +1,5 @@
-import type { MetabaseClient } from "./metabase-client.js";
 import { Cache } from "../utils/cache.js";
+import type { MetabaseClient } from "./metabase-client.js";
 
 const databaseListCache = new Cache<unknown>("database-list");
 const databaseCache = new Cache<unknown>("database");
@@ -14,7 +14,10 @@ export class DatabaseService {
 		const cacheKey = `list:${includeCards}`;
 		const cached = databaseListCache.get(cacheKey);
 		if (cached) return cached;
-		const result = await this.client.get("/api/database", includeCards ? { include_cards: "true" } : {});
+		const result = await this.client.get(
+			"/api/database",
+			includeCards ? { include_cards: "true" } : {},
+		);
 		databaseListCache.set(cacheKey, result);
 		return result;
 	}
@@ -50,7 +53,9 @@ export class DatabaseService {
 		const cacheKey = `${databaseId}:${schema}`;
 		const cached = schemaTablesCache.get(cacheKey);
 		if (cached) return cached;
-		const result = await this.client.get(`/api/database/${databaseId}/schema/${encodeURIComponent(schema)}`);
+		const result = await this.client.get(
+			`/api/database/${databaseId}/schema/${encodeURIComponent(schema)}`,
+		);
 		schemaTablesCache.set(cacheKey, result);
 		return result;
 	}

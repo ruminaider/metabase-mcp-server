@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest";
-import { initReadOnlyGuard, assertWriteEnabled } from "./read-only-guard.js";
-import { ReadOnlyError } from "./errors.js";
+import { describe, expect, it } from "vitest";
 import type { Config } from "../config.js";
+import { ReadOnlyError } from "./errors.js";
+import { assertWriteEnabled, initReadOnlyGuard } from "./read-only-guard.js";
 
 function makeConfig(readOnly: boolean): Config {
 	return {

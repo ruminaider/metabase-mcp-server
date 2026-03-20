@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
-import { withRetry } from "./retry.js";
+import { describe, expect, it, vi } from "vitest";
 import { MetabaseError } from "./errors.js";
+import { withRetry } from "./retry.js";
 
 describe("withRetry", () => {
 	it("returns result on first success", async () => {
@@ -28,9 +28,7 @@ describe("withRetry", () => {
 
 	it("throws after max attempts", async () => {
 		const fn = vi.fn().mockRejectedValue(new MetabaseError("server error", 500));
-		await expect(withRetry(fn, { maxAttempts: 2, baseDelayMs: 1 })).rejects.toThrow(
-			"server error",
-		);
+		await expect(withRetry(fn, { maxAttempts: 2, baseDelayMs: 1 })).rejects.toThrow("server error");
 		expect(fn).toHaveBeenCalledTimes(2);
 	});
 

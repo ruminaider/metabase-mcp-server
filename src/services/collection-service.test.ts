@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CollectionService } from "./collection-service.js";
 import type { MetabaseClient } from "./metabase-client.js";
 
@@ -41,7 +41,10 @@ describe("CollectionService", () => {
 
 	it("getCollectionItems calls correct path with params", async () => {
 		await service.getCollectionItems(5, { limit: 10, offset: 0 });
-		expect(client.get).toHaveBeenCalledWith("/api/collection/5/items", { limit: "10", offset: "0" });
+		expect(client.get).toHaveBeenCalledWith("/api/collection/5/items", {
+			limit: "10",
+			offset: "0",
+		});
 	});
 
 	it("getCollectionTree calls GET /api/collection/tree", async () => {
@@ -51,7 +54,10 @@ describe("CollectionService", () => {
 
 	it("createCollection calls POST /api/collection", async () => {
 		await service.createCollection({ name: "Test", description: "A test" });
-		expect(client.post).toHaveBeenCalledWith("/api/collection", { name: "Test", description: "A test" });
+		expect(client.post).toHaveBeenCalledWith("/api/collection", {
+			name: "Test",
+			description: "A test",
+		});
 	});
 
 	it("updateCollection calls PUT with updates", async () => {

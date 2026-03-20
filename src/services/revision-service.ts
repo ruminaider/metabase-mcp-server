@@ -1,11 +1,11 @@
-import type { MetabaseClient } from "./metabase-client.js";
 import { assertWriteEnabled } from "../utils/read-only-guard.js";
+import type { MetabaseClient } from "./metabase-client.js";
 
 export class RevisionService {
 	constructor(private client: MetabaseClient) {}
 
 	async getRevisions(entity: "card" | "dashboard", id: number): Promise<unknown> {
-		return this.client.get(`/api/revision`, { entity, id: String(id) });
+		return this.client.get("/api/revision", { entity, id: String(id) });
 	}
 
 	async revertRevision(params: {

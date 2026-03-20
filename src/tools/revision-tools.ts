@@ -1,8 +1,8 @@
-import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { RevisionService } from "../services/revision-service.js";
+import { z } from "zod";
 import type { MetabaseClient } from "../services/metabase-client.js";
-import { optimizeList, formatResponse } from "../utils/response.js";
+import { RevisionService } from "../services/revision-service.js";
+import { formatResponse, optimizeList } from "../utils/response.js";
 
 export function registerRevisionTools(server: McpServer, client: MetabaseClient): number {
 	const service = new RevisionService(client);
@@ -19,7 +19,10 @@ export function registerRevisionTools(server: McpServer, client: MetabaseClient)
 				const result = await service.getRevisions(entity, id);
 				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -37,7 +40,10 @@ export function registerRevisionTools(server: McpServer, client: MetabaseClient)
 				const result = await service.revertRevision(params);
 				return { content: [{ type: "text", text: formatResponse(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -55,7 +61,10 @@ export function registerRevisionTools(server: McpServer, client: MetabaseClient)
 				const result = await service.toggleBookmark(model, id, action);
 				return { content: [{ type: "text", text: formatResponse(result ?? "OK") }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);

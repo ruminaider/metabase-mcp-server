@@ -53,7 +53,8 @@ function stripFields(obj: unknown, fieldsToStrip: Set<string>): unknown {
 	for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
 		if (fieldsToStrip.has(key)) continue;
 		// Recursively strip nested objects, but not too deep (max 3 levels)
-		result[key] = typeof value === "object" && value !== null ? stripFields(value, fieldsToStrip) : value;
+		result[key] =
+			typeof value === "object" && value !== null ? stripFields(value, fieldsToStrip) : value;
 	}
 	return result;
 }

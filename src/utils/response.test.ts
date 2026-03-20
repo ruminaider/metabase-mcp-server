@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { optimizeDetail, optimizeList, optimizeQueryResult, formatResponse } from "./response.js";
+import { describe, expect, it } from "vitest";
+import { formatResponse, optimizeDetail, optimizeList, optimizeQueryResult } from "./response.js";
 
 describe("optimizeDetail", () => {
 	it("strips global bloat fields", () => {
@@ -55,7 +55,10 @@ describe("optimizeQueryResult", () => {
 			status: "completed",
 			row_count: 2,
 			data: {
-				rows: [[1, "Alice"], [2, "Bob"]],
+				rows: [
+					[1, "Alice"],
+					[2, "Bob"],
+				],
 				cols: [{ name: "id" }, { name: "name" }],
 			},
 		};

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { loadConfig } from "./config.js";
 
 describe("loadConfig", () => {
@@ -6,12 +6,12 @@ describe("loadConfig", () => {
 
 	beforeEach(() => {
 		process.env = { ...originalEnv };
-		delete process.env.METABASE_URL;
-		delete process.env.METABASE_API_KEY;
-		delete process.env.METABASE_SESSION_TOKEN;
-		delete process.env.METABASE_USER_EMAIL;
-		delete process.env.METABASE_PASSWORD;
-		delete process.env.METABASE_READ_ONLY;
+		process.env.METABASE_URL = undefined;
+		process.env.METABASE_API_KEY = undefined;
+		process.env.METABASE_SESSION_TOKEN = undefined;
+		process.env.METABASE_USER_EMAIL = undefined;
+		process.env.METABASE_PASSWORD = undefined;
+		process.env.METABASE_READ_ONLY = undefined;
 	});
 
 	afterEach(() => {

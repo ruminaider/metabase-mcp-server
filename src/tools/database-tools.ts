@@ -1,8 +1,8 @@
-import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { z } from "zod";
 import { DatabaseService } from "../services/database-service.js";
 import type { MetabaseClient } from "../services/metabase-client.js";
-import { optimizeList, optimizeDetail } from "../utils/response.js";
+import { optimizeDetail, optimizeList } from "../utils/response.js";
 
 export function registerDatabaseTools(server: McpServer, client: MetabaseClient): number {
 	const service = new DatabaseService(client);
@@ -18,7 +18,10 @@ export function registerDatabaseTools(server: McpServer, client: MetabaseClient)
 				const result = await service.listDatabases(include_cards);
 				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -32,7 +35,10 @@ export function registerDatabaseTools(server: McpServer, client: MetabaseClient)
 				const result = await service.getDatabase(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -46,7 +52,10 @@ export function registerDatabaseTools(server: McpServer, client: MetabaseClient)
 				const result = await service.getDatabaseMetadata(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -60,7 +69,10 @@ export function registerDatabaseTools(server: McpServer, client: MetabaseClient)
 				const result = await service.listDatabaseSchemas(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -77,7 +89,10 @@ export function registerDatabaseTools(server: McpServer, client: MetabaseClient)
 				const result = await service.listSchemaTables(database_id, schema);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);

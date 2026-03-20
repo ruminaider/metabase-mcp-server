@@ -1,31 +1,31 @@
-import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { TableService } from "../services/table-service.js";
+import { z } from "zod";
 import type { MetabaseClient } from "../services/metabase-client.js";
-import { optimizeList, optimizeDetail } from "../utils/response.js";
+import { TableService } from "../services/table-service.js";
+import { optimizeDetail, optimizeList } from "../utils/response.js";
 
 export function registerTableTools(server: McpServer, client: MetabaseClient): number {
 	const service = new TableService(client);
 
-	server.tool(
-		"list_tables",
-		"List all tables across all databases in Metabase.",
-		{},
-		async () => {
-			try {
-				const result = await service.listTables();
-				return { content: [{ type: "text", text: optimizeList(result) }] };
-			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
-			}
-		},
-	);
+	server.tool("list_tables", "List all tables across all databases in Metabase.", {}, async () => {
+		try {
+			const result = await service.listTables();
+			return { content: [{ type: "text", text: optimizeList(result) }] };
+		} catch (error) {
+			return {
+				content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+				isError: true,
+			};
+		}
+	});
 
 	server.tool(
 		"get_table",
 		"Get details for a specific table by ID.",
 		{
-			id: z.union([z.number(), z.array(z.number())]).describe("Table ID or array of Table IDs for batch retrieval"),
+			id: z
+				.union([z.number(), z.array(z.number())])
+				.describe("Table ID or array of Table IDs for batch retrieval"),
 		},
 		async ({ id }) => {
 			try {
@@ -36,7 +36,10 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 				const result = await service.getTable(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -46,14 +49,20 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 		"Get full metadata for a table including all fields, foreign keys, and field values.",
 		{
 			id: z.number().describe("Table ID"),
-			include_sensitive_fields: z.boolean().optional().describe("Include sensitive fields in response"),
+			include_sensitive_fields: z
+				.boolean()
+				.optional()
+				.describe("Include sensitive fields in response"),
 		},
 		async ({ id, include_sensitive_fields }) => {
 			try {
 				const result = await service.getTableMetadata(id, include_sensitive_fields);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -67,7 +76,10 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 				const result = await service.getTableFks(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -81,7 +93,10 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 				const result = await service.getField(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -95,7 +110,10 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 				const result = await service.getFieldValues(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -108,15 +126,24 @@ export function registerTableTools(server: McpServer, client: MetabaseClient): n
 			display_name: z.string().optional().describe("New display name"),
 			description: z.string().optional().describe("New description"),
 			semantic_type: z.string().optional().describe("Semantic type (e.g. type/FK, type/Category)"),
-			visibility_type: z.enum(["normal", "details-only", "hidden", "sensitive"]).optional().describe("Visibility"),
-			has_field_values: z.enum(["none", "list", "search"]).optional().describe("How field values are fetched"),
+			visibility_type: z
+				.enum(["normal", "details-only", "hidden", "sensitive"])
+				.optional()
+				.describe("Visibility"),
+			has_field_values: z
+				.enum(["none", "list", "search"])
+				.optional()
+				.describe("How field values are fetched"),
 		},
 		async ({ id, ...updates }) => {
 			try {
 				const result = await service.updateField(id, updates);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);

@@ -1,8 +1,13 @@
-import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { z } from "zod";
 import { CardService } from "../services/card-service.js";
 import type { MetabaseClient } from "../services/metabase-client.js";
-import { optimizeList, optimizeDetail, optimizeQueryResult, formatResponse } from "../utils/response.js";
+import {
+	formatResponse,
+	optimizeDetail,
+	optimizeList,
+	optimizeQueryResult,
+} from "../utils/response.js";
 
 export function registerCardTools(server: McpServer, client: MetabaseClient): number {
 	const service = new CardService(client);
@@ -11,7 +16,10 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 		"list_cards",
 		"List saved questions/cards in Metabase. Filter by category.",
 		{
-			f: z.enum(["all", "archived", "mine", "popular", "recent"]).optional().describe("Filter category"),
+			f: z
+				.enum(["all", "archived", "mine", "popular", "recent"])
+				.optional()
+				.describe("Filter category"),
 			model_id: z.number().optional().describe("Filter by model ID"),
 		},
 		async (params) => {
@@ -19,7 +27,10 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 				const result = await service.listCards(params);
 				return { content: [{ type: "text", text: optimizeList(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -28,7 +39,9 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 		"get_card",
 		"Get a saved question/card by ID, including its query definition and visualization settings.",
 		{
-			id: z.union([z.number(), z.array(z.number())]).describe("Card ID or array of Card IDs for batch retrieval"),
+			id: z
+				.union([z.number(), z.array(z.number())])
+				.describe("Card ID or array of Card IDs for batch retrieval"),
 		},
 		async ({ id }) => {
 			try {
@@ -39,7 +52,10 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 				const result = await service.getCard(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -60,7 +76,10 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 				const result = await service.createCard(params);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -82,7 +101,10 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 				const result = await service.updateCard(id, updates);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -96,7 +118,10 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 				const result = await service.copyCard(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -114,7 +139,10 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 				const result = await service.executeCard(id, parameters, ignore_cache);
 				return { content: [{ type: "text", text: optimizeQueryResult(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -131,7 +159,10 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 				const result = await service.exportCardResults(id, format);
 				return { content: [{ type: "text", text: formatResponse(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -145,7 +176,10 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 				const result = await service.getCardMetadata(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -159,7 +193,10 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 				const result = await service.listCardDashboards(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);
@@ -173,7 +210,10 @@ export function registerCardTools(server: McpServer, client: MetabaseClient): nu
 				const result = await service.archiveCard(id);
 				return { content: [{ type: "text", text: optimizeDetail(result) }] };
 			} catch (error) {
-				return { content: [{ type: "text", text: `Error: ${(error as Error).message}` }], isError: true };
+				return {
+					content: [{ type: "text", text: `Error: ${(error as Error).message}` }],
+					isError: true,
+				};
 			}
 		},
 	);

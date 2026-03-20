@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { QueryService } from "./query-service.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { MetabaseClient } from "./metabase-client.js";
+import { QueryService } from "./query-service.js";
 
 function mockClient(): MetabaseClient {
 	return {

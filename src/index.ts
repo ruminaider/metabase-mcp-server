@@ -3,8 +3,8 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { loadConfig } from "./config.js";
 import { createServer } from "./server.js";
 import { MetabaseClient } from "./services/metabase-client.js";
-import { initReadOnlyGuard } from "./utils/read-only-guard.js";
 import { logger } from "./utils/logger.js";
+import { initReadOnlyGuard } from "./utils/read-only-guard.js";
 
 async function main() {
 	const config = loadConfig();
